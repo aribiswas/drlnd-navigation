@@ -17,10 +17,10 @@ class QNetwork(nn.Module):
         
         # define the deep neural network structure
         self.model = nn.Sequential(nn.Linear(osize,64),
-                                   #nn.BatchNorm1d(64),
+                                   nn.BatchNorm1d(64),
                                    nn.ReLU(),
                                    nn.Linear(64,32),
-                                   #nn.BatchNorm1d(32),
+                                   nn.BatchNorm1d(32),
                                    nn.ReLU(),
                                    nn.Linear(32,asize))
         
