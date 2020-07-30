@@ -83,7 +83,7 @@ where a is an action sampled from the agent's policy <img src="https://render.gi
 
 <img src="https://render.githubusercontent.com/render/math?math=\delta = Q^(s,a%3B\theta) - r %2B \gamma argmax_a Q^*(s,a%3B\theta^-)">
 
-The agent also uses the **Double-DQN** algorithm which decouples the action selection from the target network evaluation during computation of the TD error. This reduces issues like overestimation during training. TLDR, the argmax operation is performed on the target network instead of the local Q-network. A full description of the Double-DQN algorithm can be found in the paper [here](https://arxiv.org/abs/1509.06461).
+The agent also uses the **Double-DQN** algorithm which decouples the action selection from the target network evaluation during computation of the TD error. This reduces issues like overestimation during training. TLDR, the argmax operation is performed on the local Q-network instead of the target network. A full description of the Double-DQN algorithm can be found in the paper [here](https://arxiv.org/abs/1509.06461).
 
 <pre><code>def learn(self,experiences):
         """
