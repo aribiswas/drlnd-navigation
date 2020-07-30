@@ -26,4 +26,4 @@ You can run the code from any Python IDE or a terminal.
 * To run from a terminal, run ***nav_train.py*** to train the agent, or ***nav_sim.py*** to watch a trained agent.
 <pre><code>python nav_train.py</code></pre>
 
-
+For both the above steps, you must change the ***file_name*** variable in the code to match the appropriate platform.
