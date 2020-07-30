@@ -3,100 +3,54 @@
 """
 Created on Sat May 30 23:27:30 2020
 
-@author: aritra
 """
 
 import torch
 import random
-import collections
+from collections import namedtuple, deque
 import numpy as np
 
 # ExperienceReplay stores experiences in a circular buffer.
 # Each experience is a tuple of (state,action,reward,next_state,done)
 class ExperienceReplay:
-    def __init__(self,capacity=1e6):
-        # initialize the buffer
-        self.memory = collections.deque(maxlen=capacity)
-        
-    def reset(self):
-        self.memory.clear()
-        
-    def append(self,experience):
-        self.memory.append(experience)
-    
-    def sample(self,batchsize):
-        # randomly sample experiences from uniform distribution
-        experiences = random.sample(self.memory,batchsize)
-        
-        # stack state, action, reward, next_state and done values
-        states = torch.stack([experiences[i][0] for i in range(len(experiences))])
-        actions = torch.stack([experiences[i][1] for i in range(len(experiences))])
-        rewards = torch.stack([experiences[i][2] for i in range(len(experiences))])
-        next_states = torch.stack([experiences[i][3] for i in range(len(experiences))])
-        dones = torch.stack([experiences[i][4] for i in range(len(experiences))])
-        
-        return (states,actions,rewards,next_states,dones)
-    
+    """Fixed-size buffer to store experience tuples."""
 
-# PrioritizedExperienceReplay stores experiences in a circular buffer.
-# Each experience is a tuple of (state,action,reward,next_state,done)
-# Experience priorities are stored in a second data structure
-class PrioritizedExperienceReplay:
-    def __init__(self,buffersize,alpha,beta):
-        # initialize the buffer
-        self.memory = collections.deque(maxlen=buffersize)
-        self.priorities = collections.deque(maxlen=buffersize)
-        self.alpha = alpha
-        
-    def reset(self):
-        self.memory.clear()
-        self.priorities.clear()
-        
-    def append(self,experience):
-        self.memory.append(experience)
-        max_prio = max(self.priorities) if self.priorities else 1
-        self.priorities.append(max_prio)  # append with max priority
+    def __init__(self, action_size, buffer_size, batch_size, seed):
+        """Initialize a ReplayBuffer object.
+
+        Params
+        ======
+            action_size (int): dimension of each action
+            buffer_size (int): maximum size of buffer
+            batch_size (int): size of each training batch
+            seed (int): random seed
+        """
+        self.action_size = action_size
+        self.memory = deque(maxlen=buffer_size)  
+        self.batch_size = batch_size
+        self.experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
+        self.seed = random.seed(seed)
     
-    def sample(self,batchsize):
-        # total number of experiences in the replay memory
-        num_exp_in_buffer = len(self.memory)
+    def add(self, state, action, reward, next_state, done):
+        """Add a new experience to memory."""
         
-        # discrete probabilities of experiences
-        # P(j) = (p_j)^a / sum(p^a)
-        prio_alpha = [p ** self.alpha for p in self.priorities]
-        sum_prio = sum(prio_alpha)
-        probs = [prio / sum_prio for prio in prio_alpha]
-        
-        # select experiences
-        choices = np.random.choice(num_exp_in_buffer, batchsize, p=probs)
-        
-        # stack state, action, reward, next_state and done values
-        states = torch.stack([self.memory[item][0] for item in choices])
-        actions = torch.stack([self.memory[item][1] for item in choices])
-        rewards = torch.stack([self.memory[item][2] for item in choices])
-        next_states = torch.stack([self.memory[item][3] for item in choices])
-        dones = torch.stack([self.memory[item][4] for item in choices])
-        
-        experiences = (states,actions,rewards,next_states,dones)
-        
-        return experiences, choices
+        e = self.experience(state, action, reward, next_state, done)
+        self.memory.append(e)
     
-    def update_priorities(self,priorities,indices):
-        for p,idx in zip(priorities,indices):
-            self.priorities[idx] = p
+    def sample(self,device):
+        """Randomly sample a batch of experiences from memory."""
         
+        experiences = random.sample(self.memory, k=self.batch_size)
+
+        states = torch.from_numpy(np.vstack([e.state for e in experiences if e is not None])).float().to(device)
+        actions = torch.from_numpy(np.vstack([e.action for e in experiences if e is not None])).long().to(device)
+        rewards = torch.from_numpy(np.vstack([e.reward for e in experiences if e is not None])).float().to(device)
+        next_states = torch.from_numpy(np.vstack([e.next_state for e in experiences if e is not None])).float().to(device)
+        dones = torch.from_numpy(np.vstack([e.done for e in experiences if e is not None]).astype(np.uint8)).float().to(device)
+  
+        return (states, actions, rewards, next_states, dones)
+
+    def __len__(self):
+        """Return the current size of internal memory."""
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        return len(self.memory)
