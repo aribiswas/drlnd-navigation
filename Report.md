@@ -4,7 +4,7 @@
 
 The environment used in this project is the Banana environment project in Unity Machine Learning Agents (ML-Agents).
 
-![Alt Text](banana_anim.gif)
+![Banana_animation](banana_anim.gif)
 
 A reward of +1 is provided for collecting a yellow banana, and a reward of -1 is provided for collecting a blue banana. Thus, the goal of the agent is to collect as many yellow bananas as possible while avoiding blue bananas.
 
@@ -166,3 +166,12 @@ LEARNRATE = 2e-4         # Learn rate of Q network
 TAU = 1e-3               # Target network update factor
 </code></pre>
 
+## Training results
+
+With the above hyperparameter set and network structure, the agent solves the environment in 775 episodes. Following is a plot of the training progress with average reward per episode and mean squared loss of the TD error per agent step.
+
+<img src="./training_results.png" alt="Drawing" width="600"/>
+
+## Future work
+
+One future direction for this project is to improve on training performance by implementing a Prioritized Experience Replay that samples from the buffer based on assigned priorities instead of a uniform distribution.
