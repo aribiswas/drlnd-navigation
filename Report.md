@@ -75,13 +75,13 @@ In this implementation, the replay memory is a deque. Data is stored in the dequ
 
 ### Learning algorithm
 
-The goal of the learning algorithm is to maximize the discounted return <img src="https://render.githubusercontent.com/render/math?math=G=\sum_{k=0}^{T}\gamma^{k}r_{k}">, where T is the time step at which the episode terminates, <img src="https://render.githubusercontent.com/render/math?math=r_k"> is the reward at the *k-th* time step, and <img src="https://render.githubusercontent.com/render/math?math=\gamma"> is a hyperparameter that controls the importance of future rewards. The idea behind a Deep Q-Learning algorithm is to approximate the optimal state-action value function <img src="https://render.githubusercontent.com/render/math?math=Q^*(s,a)"> through a deep neural network by iteratively updating the weights of the network. The update rule is governed by the Bellman equation
+The goal of the learning algorithm is to maximize the discounted return <img src="https://render.githubusercontent.com/render/math?math=G=\sum_{k=0}^{T}\gamma^{k}r_{k}">, where T is the time step at which the episode terminates, <img src="https://render.githubusercontent.com/render/math?math=r_k"> is the reward at the *k-th* time step, and <img src="https://render.githubusercontent.com/render/math?math=\gamma"> is a hyperparameter that controls the importance of future rewards. The idea behind a Deep Q-Learning algorithm is to approximate the optimal state-action value function <img src="https://render.githubusercontent.com/render/math?math=Q^{*}(s,a)"> through a deep neural network by iteratively updating the weights of the network. The update rule is governed by the Bellman equation
 
-<img src="https://render.githubusercontent.com/render/math?math=Q^*(s,a|\theta) = r %2B \gamma max_a Q^*(s,a|\theta)">
+<img src="https://render.githubusercontent.com/render/math?math=Q^{*}(s,a%3B\theta) = r %2B \gamma max_a Q^{*}(s,a%3Btheta)">
 
-where a is an action sampled from the agent's policy <img src="https://render.githubusercontent.com/render/math?math=\pi"> and <img src="https://render.githubusercontent.com/render/math?math=\theta)"> are the weights of the neural network. At every learning step, the algorithm tries to minimize the error in the Bellman equation where the optimal target value <img src="https://render.githubusercontent.com/render/math?math=Q^*(s,a|\theta)"> is replaced by approximate target values <img src="https://render.githubusercontent.com/render/math?math=Q^*(s,a|\theta^-)"> from the previous iteration step. This error is the temporal difference (TD) error and is computed using two neural networks - a target network that approximates the optimal state-action value function, and a local network that updates itself to minimize error with the target network.
+where a is an action sampled from the agent's policy <img src="https://render.githubusercontent.com/render/math?math=\pi"> and <img src="https://render.githubusercontent.com/render/math?math=\theta)"> are the weights of the neural network. At every learning step, the algorithm tries to minimize the error in the Bellman equation where the optimal target value <img src="https://render.githubusercontent.com/render/math?math=Q^*(s,a%3B\theta)"> is replaced by approximate target values <img src="https://render.githubusercontent.com/render/math?math=Q^*(s,a%3B\theta^-)"> from the previous iteration step. This error is the temporal difference (TD) error and is computed using two neural networks - a target network that approximates the optimal state-action value function, and a local network that updates itself to minimize error with the target network.
 
-<img src="https://render.githubusercontent.com/render/math?math=\delta = Q^(s,a|\theta) - r %2B \gamma argmax_a Q^*(s,a|\theta^-)">
+<img src="https://render.githubusercontent.com/render/math?math=\delta = Q^(s,a%3B\theta) - r %2B \gamma argmax_a Q^*(s,a%3B\theta^-)">
 
 The agent also uses the **Double-DQN** algorithm which decouples the action selection from the target network evaluation during computation of the TD error. This reduces issues like overestimation during training. TLDR, the argmax operation is performed on the target network instead of the local Q-network. A full description of the Double-DQN algorithm can be found in the paper [here](https://arxiv.org/abs/1509.06461).
 
@@ -123,7 +123,7 @@ The agent also uses the **Double-DQN** algorithm which decouples the action sele
 
 ### Deep Q-Network model
 
-A simple neural network with three fully connected layers is used in this project. The fully connected layer outputs are passed through ReLU layers during computing forward pass. To stabilize training, a batch normalization layer is used to wrap the outputs from the first fully connected layer.
+A simple neural network with three fully connected layers is used to model the local and target Q-networks. The network takes in the 37 observations as inputs and outputs the Q-values of all possible actions. During the forward pass, the fully connected layer outputs are passed through ReLU activation layers. A batch normalization layer is also used to wrap the outputs from the first fully connected layer, to improve training stability.
 
 <pre><code>class QNetwork(nn.Module):
     
