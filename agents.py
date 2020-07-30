@@ -28,7 +28,7 @@ class DQNAgent:
     
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     
-    def __init__(self,osize,asize,seed,buffersize=1e6,gamma=0.99,epsilon=0.05,epsilondecay=1e6,epsilonmin=0.1,minibatchsize=128,lr=0.01,tau=0.01):
+    def __init__(self,osize,asize,seed,buffersize=int(1e6),gamma=0.99,epsilon=0.05,epsilondecay=1e6,epsilonmin=0.1,minibatchsize=128,lr=0.01,tau=0.01):
         """
         Initialize DQN agent parameters.
         """
@@ -130,14 +130,15 @@ class DQNAgent:
         
         # calculate loss
         loss = F.mse_loss(local,target)
+        self.loss_log.append(loss.cpu().data.numpy())
         
         # perform gradient descent step
         self.optimizer.zero_grad()    # reset the gradients to zero
         loss.backward()
         self.optimizer.step()
         
-        # soft update target network
-        for target_params, params in zip(self.targetQ.parameters(), self.Q.parameters()):
-            target_params.data.copy_(self.tau*params + (1-self.tau)*target_params.data)
+        if self.stepcount%10==0:
+            # soft update target network
+            for target_params, params in zip(self.targetQ.parameters(), self.Q.parameters()):
+                target_params.data.copy_(self.tau*params + (1-self.tau)*target_params.data)
     
-        self.loss_log.append(loss.cpu().data.numpy())

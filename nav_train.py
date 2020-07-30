@@ -23,7 +23,7 @@ DECAY = 1e-5             # Epsilon decay rate
 EPMIN = 0.1              # Minimum value of epsilon
 MINIBATCHSIZE = 64       # Batch size for sampling from experience replay
 LEARNRATE = 2e-4         # Learn rate of Q network
-TAU = 1e-3               # Target network update factor
+TAU = 1e-2               # Target network update factor
 
 # training options
 MAX_EPISODES = 5000      # Maximum number of training episodes
@@ -89,7 +89,7 @@ for ep_count in range(1,MAX_EPISODES):
     avg_log.append(avg_reward)
     reward_log.append(ep_reward)
     if VERBOSE and (ep_count==1 or ep_count%100==0):
-        print('EP: {} \tEPR: {:8.4f} \tAVR: {:8.4f} \tEpsilon: {:.4f} \tLoss: {:8.4f}'.format(ep_count,ep_reward,avg_reward,agent.epsilon,agent.loss_log[ep_count]))
+        print('EP: {:4d} \tEPR: {:4.4f} \tAVR: {:4.4f} \tEpsilon: {:.4f} \tLoss: {:.4f}'.format(ep_count,ep_reward,avg_reward,agent.epsilon,agent.loss_log[ep_count]))
     
     # check if env is solved
     if avg_log[ep_count-1] >= 13:
@@ -104,19 +104,21 @@ env.close()
 plt.ion()
 fig, axarr = plt.subplots(2,1, figsize=(6,6), dpi=200)
 ax1 = axarr[0]
-ax1.set_title("Training Results", fontsize=16)
-ax1.set_xlabel("Episodes", fontsize=16)
-ax1.set_ylabel("Average Reward", fontsize=16)
+ax1.set_title("Training Results")
+ax1.set_xlabel("Episodes")
+ax1.set_ylabel("Average Reward")
 ax1.set_xlim([0, ep_count+20])
 ax1.set_ylim([0, 20])
 ax1.plot(range(1,ep_count+1),avg_log)
 
 # plot loss
 ax2 = axarr[1]
-ax2.set_xlabel("Steps", fontsize=16)
-ax2.set_ylabel("Loss", fontsize=16)
+ax2.set_xlabel("Steps")
+ax2.set_ylabel("Loss")
 ax2.set_xlim([0, agent.stepcount+20])
 ax2.plot(range(agent.minibatchsize,agent.stepcount),agent.loss_log)
 
+fig.tight_layout(pad=1.0)
 plt.show()
+fig.savefig('results.png',dpi=200)
     

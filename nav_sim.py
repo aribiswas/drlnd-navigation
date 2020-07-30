@@ -13,19 +13,8 @@ from matplotlib import pyplot as plt
 from unityagents import UnityEnvironment
 from agents import DQNAgent
 
-
-BUFFERSIZE = int(1e6)    # Experience buffer size
-GAMMA = 0.99            # Discount factor
-EPSILON = 0.95           # Epsilon parameter for selecting action
-DECAY = 1e-5            # Epsilon decay rate
-EPMIN = 0.1             # Minimum value of epsilon
-MINIBATCHSIZE = 64     # Batch size for sampling from experience replay
-LEARNRATE = 2e-4        # Learn rate of Q network
-TAU = 1e-3              # Target network update factor
-
-# training options
-MAX_EPISODES = 5000     # Maximum number of training episodes
-AVG_WINDOW = 100        # Window length for calculating score averages
+# sim options
+NUM_SIMS = 3                    # Number of simulations
 MAX_STEPS_PER_EPISODE = 1000    # Maximum agent steps per episode
 
 # create environment
@@ -42,14 +31,12 @@ env_info = env.reset(train_mode=False)[brain_name]
 osize = len(env_info.vector_observations[0])
 asize = brain.vector_action_space_size
 seed = 0
-agent = DQNAgent(osize,asize,seed,BUFFERSIZE,GAMMA,EPSILON,DECAY,EPMIN,MINIBATCHSIZE,LEARNRATE,TAU)
+agent = DQNAgent(osize,asize,seed)
 
 # load the weights from file
 agent.Q.load_state_dict(torch.load('checkpoint.pth'))
 
-# number of simulations
-NUM_SIMS = 3
-
+# simulate smart agent
 for i in range(NUM_SIMS):
     
     # reset the environment
@@ -58,7 +45,7 @@ for i in range(NUM_SIMS):
     
     for t in range(1,MAX_STEPS_PER_EPISODE):
         
-        # sample action
+        # get action from policy
         action = agent.get_action(state)
         
         # step the environment
