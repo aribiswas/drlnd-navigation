@@ -137,8 +137,7 @@ class DQNAgent:
         loss.backward()
         self.optimizer.step()
         
-        if self.stepcount%10==0:
-            # soft update target network
-            for target_params, params in zip(self.targetQ.parameters(), self.Q.parameters()):
-                target_params.data.copy_(self.tau*params + (1-self.tau)*target_params.data)
+        # soft update target network
+        for target_params, params in zip(self.targetQ.parameters(), self.Q.parameters()):
+            target_params.data.copy_(self.tau*params + (1-self.tau)*target_params.data)
     

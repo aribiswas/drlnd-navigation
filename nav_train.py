@@ -89,11 +89,11 @@ for ep_count in range(1,MAX_EPISODES):
     avg_log.append(avg_reward)
     reward_log.append(ep_reward)
     if VERBOSE and (ep_count==1 or ep_count%100==0):
-        print('EP: {:4d} \tEPR: {:4.4f} \tAVR: {:4.4f} \tEpsilon: {:.4f} \tLoss: {:.4f}'.format(ep_count,ep_reward,avg_reward,agent.epsilon,agent.loss_log[ep_count]))
+        print('Episode: {:4d} \tEpisode Reward: {:4.2f} \tAverage Reward: {:4.2f} \tEpsilon: {:6.4f} \tLoss: {:6.4f}'.format(ep_count,ep_reward,avg_reward,agent.epsilon,agent.loss_log[ep_count]))
     
     # check if env is solved
-    if avg_log[ep_count-1] >= 13:
-        print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(ep_count, avg_log[ep_count-1]))
+    if avg_reward >= 13:
+        print('\nEnvironment solved in {:d} episodes!\tAverage Reward: {:.2f}'.format(ep_count, avg_reward))
         torch.save(agent.Q.state_dict(), 'checkpoint.pth')
         break
 
@@ -102,7 +102,7 @@ env.close()
 
 # plot score history
 plt.ion()
-fig, axarr = plt.subplots(2,1, figsize=(6,6), dpi=200)
+fig, axarr = plt.subplots(2,1, figsize=(4,4), dpi=200)
 ax1 = axarr[0]
 ax1.set_title("Training Results")
 ax1.set_xlabel("Episodes")

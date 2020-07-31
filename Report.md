@@ -1,24 +1,5 @@
 # Deep RL Nanodegree - Navigation - Report
 
-## The Environment
-
-The environment used in this project is the Banana environment project in Unity Machine Learning Agents (ML-Agents).
-
-![Banana_animation](banana_anim.gif)
-
-A reward of +1 is provided for collecting a yellow banana, and a reward of -1 is provided for collecting a blue banana. Thus, the goal of the agent is to collect as many yellow bananas as possible while avoiding blue bananas.
-
-The state space has 37 dimensions and contains the agent's velocity, along with ray-based perception of objects around the agent's forward direction. Given this information, the agent has to learn how to best select actions. Four discrete actions are available, corresponding to:
-
-* 0 - move forward.
-* 1 - move backward.
-* 2 - turn left.
-* 3 - turn right.
-
-The task is episodic, and in order to solve the environment, the agent must get an average score of +13 over 100 consecutive episodes.
-
-[1] Environment description from Deep Reinforcement Learning Nanodegree, Udacity.
-
 ## The Agent
 
 A Deep Q-Network (DQN) agent combines Q-Learning with a deep neural network to learn a policy. The agent learns by interacting with the environment, receiving rewards and updating the neural network weights. 
@@ -77,11 +58,11 @@ In this implementation, the replay memory is a deque. Data is stored in the dequ
 
 The goal of the learning algorithm is to maximize the discounted return <img src="https://render.githubusercontent.com/render/math?math=G=\sum_{k=0}^{T}\gamma^{k}r_{k}">, where T is the time step at which the episode terminates, <img src="https://render.githubusercontent.com/render/math?math=r_k"> is the reward at the *k-th* time step, and <img src="https://render.githubusercontent.com/render/math?math=\gamma"> is a hyperparameter that controls the importance of future rewards. The idea behind a Deep Q-Learning algorithm is to approximate the optimal state-action value function <img src="https://render.githubusercontent.com/render/math?math=Q^{*}(s,a)"> through a deep neural network by iteratively updating the weights of the network. The update rule is governed by the Bellman equation
 
-<img src="https://render.githubusercontent.com/render/math?math=Q^{*}(s,a%3B\theta) = r %2B \gamma max_a Q^{*}(s,a%3Btheta)">
+<img src="https://render.githubusercontent.com/render/math?math=Q^{*}(s,a%3B\theta) = r %2B \gamma max_a Q^{*}(s,a%3B\theta)">
 
-where a is an action sampled from the agent's policy <img src="https://render.githubusercontent.com/render/math?math=\pi"> and <img src="https://render.githubusercontent.com/render/math?math=\theta)"> are the weights of the neural network. At every learning step, the algorithm tries to minimize the error in the Bellman equation where the optimal target value <img src="https://render.githubusercontent.com/render/math?math=Q^*(s,a%3B\theta)"> is replaced by approximate target values <img src="https://render.githubusercontent.com/render/math?math=Q^*(s,a%3B\theta^-)"> from the previous iteration step. This error is the temporal difference (TD) error and is computed using two neural networks - a target network that approximates the optimal state-action value function, and a local network that updates itself to minimize error with the target network.
+where a is an action sampled from the agent's policy <img src="https://render.githubusercontent.com/render/math?math=\pi"> and <img src="https://render.githubusercontent.com/render/math?math=\theta)"> are the weights of the neural network. At every learning step, the algorithm tries to minimize the error in the Bellman equation where the optimal target value <img src="https://render.githubusercontent.com/render/math?math=Q^{*}(s,a%3B\theta)"> is replaced by approximate target values <img src="https://render.githubusercontent.com/render/math?math=Q^{*}(s,a%3B\theta^{-})"> from the previous iteration step. This error is the temporal difference (TD) error and is computed using two neural networks - a target network that approximates the optimal state-action value function, and a local network that updates itself to minimize error with the target network.
 
-<img src="https://render.githubusercontent.com/render/math?math=\delta = Q^(s,a%3B\theta) - r %2B \gamma argmax_a Q^*(s,a%3B\theta^-)">
+<img src="https://render.githubusercontent.com/render/math?math=\delta = Q(s,a%3B\theta) - r %2B \gamma argmax_a Q^{*}(s,a%3B\theta^{-})">
 
 The agent also uses the **Double-DQN** algorithm which decouples the action selection from the target network evaluation during computation of the TD error. This reduces issues like overestimation during training. TLDR, the argmax operation is performed on the local Q-network instead of the target network. A full description of the Double-DQN algorithm can be found in the paper [here](https://arxiv.org/abs/1509.06461).
 
@@ -152,9 +133,9 @@ A simple neural network with three fully connected layers is used to model the l
 ### Hyperparameters
 
 * The DQN algorithm relies on the ***epsilon*** hyperparameter for exploration. For this project, the ***epsilon*** parameter is initially set to 0.95 at the begininng of training when the policy favors random actions. At each agent step, the epsilon value is decayed exponentially by a decay factor of 1e-5, with a minimum epsilon limit of 0.1. With this exponential decay, the agent favors exploration towards the beginning of training and exploitation later on.
+* The agent learns from mini batches of 64 experiences. For the gradient computation, the adam optimizer is used with a learn rate of 2e-4.
 * A discount factor of 0.99 favors long term rewards during return computation.
-* The agent learns from mini batches of 64 experiences. For the gradient computation, we use the adam optimizer with a learn rate of 2e-4.
-* The target Q-network is soft-updated with an update factor of 1e-3
+* The target Q-network is soft-updated with an update factor of 1e-3. This reduces sudden changes in the target network and improves training stability.
 
 <pre><code>BUFFERSIZE = int(1e6)    # Experience buffer size
 GAMMA = 0.99             # Discount factor
@@ -168,10 +149,10 @@ TAU = 1e-3               # Target network update factor
 
 ## Training results
 
-With the above hyperparameter set and network structure, the agent solves the environment in 775 episodes. Following is a plot of the training progress with average reward per episode and mean squared loss of the TD error per agent step.
+With the above hyperparameter set and network structure, the agent solves the environment in 828 episodes. Following is a plot of the training progress with average reward per episode and mean squared loss of the TD error per agent step.
 
-<img src="./training_results.png" alt="Drawing" width="600"/>
+![TrainingResults](training_results.png)
 
 ## Future work
 
-One future direction for this project is to improve on training performance by implementing a Prioritized Experience Replay that samples from the buffer based on assigned priorities instead of a uniform distribution.
+One future direction for this project is to implement a Prioritized Experience Replay (PER). A PER stores experience priorities in addition to experiences. The priorities play a role during sampling from the PER, ensuring that valuable experiences are sampled more often than others.
