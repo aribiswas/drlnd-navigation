@@ -7,13 +7,6 @@ Revised on Tue Jul 28
 @author: abiswas
 """
 
-# -*- coding: utf-8 -*-
-"""
-Created on Sat May 30 16:20:40 2020
-
-@author: abiswas
-"""
-
 import random
 import torch
 import torch.nn as nn
