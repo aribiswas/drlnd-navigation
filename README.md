@@ -54,4 +54,4 @@ For both the above steps, you must change the ***file_name*** variable in the co
 
 After the training finishes, you can view the training results in the generated **results.png** file. You can expect the trained agent to collect the yellow bananas in the environment. Following is an example of how the agent may behave after training.
 
-[[AfterTraining](https://img.youtube.com/vi/xarV4i3wmVo/0.jpg)](https://www.youtube.com/watch?v=xarV4i3wmVo)
+[![AfterTraining](https://img.youtube.com/vi/xarV4i3wmVo/0.jpg)](https://www.youtube.com/watch?v=xarV4i3wmVo)
