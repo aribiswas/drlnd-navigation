@@ -4,11 +4,9 @@ The goal of this project is to train an agent to navigate (and collect bananas!)
 
 ## The Environment
 
-![Alt Text](banana_anim.gif)
-
 The environment used in this project is the Banana environment project in Unity Machine Learning Agents (ML-Agents).
 
-![Banana_animation](banana_env_image.png)
+![Banana_image](banana_env_image.png)
 
 A reward of +1 is provided for collecting a yellow banana, and a reward of -1 is provided for collecting a blue banana. Thus, the goal of the agent is to collect as many yellow bananas as possible while avoiding blue bananas.
 
