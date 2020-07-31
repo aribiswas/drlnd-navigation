@@ -1,8 +1,12 @@
-# drlnd-navigation
+# Deep RL Nanodegree - Navigation
+
+The goal of this project is to train an agent to navigate (and collect bananas!) in a large, square world. 
+
+![Alt Text](banana_anim.gif)
 
 ## Getting Started
 
-**Install Prerequisites:**
+**Installing dependencies:**
 
 To run this project, you must have Python 3.6, Pytorch and Unity ML-Agents toolkit installed. Follow the instructions in Udacity's [Deep Reinforcement Learning Nanodegree repository](https://github.com/udacity/deep-reinforcement-learning#dependencies) to install the required dependencies.
 
@@ -17,9 +21,9 @@ You must also use one of the following Unity environments for this project. Down
 
 You can run the code from any Python IDE or a terminal. 
 
-To run the code in a Jupyter notebook, open the ***Navigation.ipynb*** file. This notebook goes through staring the Unity environment, creating the agent and training.
+* To run the code in a Jupyter notebook, open the ***Navigation.ipynb*** file. This notebook goes through staring the Unity environment, creating the agent and training.
 
-To run from a terminal, run ***nav_train.py*** to train the agent, or ***nav_sim.py*** to watch a trained agent.
+* To run from a terminal, run ***nav_train.py*** to train the agent, or ***nav_sim.py*** to watch a trained agent.
 <pre><code>python nav_train.py</code></pre>
 
-
+For both the above steps, you must change the ***file_name*** variable in the code to match the appropriate platform.
